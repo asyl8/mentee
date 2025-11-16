@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mentee – Schedule Session</title>
+
+  <style>
+    :root {
+      --mint-bg: #e4f5ee;
+      --peach-card: #f8d5a4;
+      --card-border: #2b241f;
+      --text-main: #2b241f;
+      --text-muted: #555555;
+      --btn-green: #3bd48c;
+      --btn-border: #2b241f;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--mint-bg);
+      color: var(--text-main);
+    }
+
+    .hidden { display: none !important; }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1.5rem;
+      background: #fdfdfd;
+      border-bottom: 2px solid #dcdcdc;
+      font-weight: 600;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-logo-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 2px solid var(--card-border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      border: 2px solid var(--btn-border);
+      background: #ffffff;
+      color: var(--text-main);
+      padding: 0.45rem 1.2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem 1.5rem 2.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 1.2rem;
+    }
+
+    .card {
+      background: var(--peach-card);
+      border-radius: 18px;
+      border: 2px solid var(--card-border);
+      padding: 1.2rem 1.3rem 1.3rem;
+    }
+
+    .tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: #e6e7ec;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.78rem;
+    }
+
+    .rating { margin-top: 0.3rem; }
+
+    /* BULLET LIST */
+    .extra-list {
+      margin-top: 0.6rem;
+      padding-left: 1.1rem;
+    }
+
+    .extra-list li {
+      margin-bottom: 0.4rem;
+      font-size: 1.12rem;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    /* LONG DESCRIPTION CARD */
+    .long-description {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #3a302a;
+      background: #fffdf7;
+      padding: 1.2rem 1.4rem;
+      border-radius: 14px;
+      border: 2px solid var(--card-border);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.05);
+    }
+
+    .form-group { margin-bottom: 0.9rem; }
+
+    .input, .textarea {
+      width: 100%;
+      border-radius: 999px;
+      border: 2px solid var(--card-border);
+      padding: 0.55rem 1rem;
+      font-size: 1rem;
+      background: #ffffff;
+    }
+
+    .textarea { border-radius: 14px; min-height: 80px; resize: vertical; }
+
+    /* 🔥 BIGGER BUTTONS */
+    .btn-primary {
+      width: 100%;
+      border-radius: 999px;
+      background: var(--btn-green);
+      color: white;
+      padding: 0.9rem 1.2rem;
+      font-size: 1.1rem;
+      border: 2px solid var(--btn-border);
+      cursor: pointer;
+      margin-top: 0.6rem;
+      font-weight: 600;
+    }
+
+    .btn-email {
+      width: 100%;
+      border-radius: 999px;
+      border: 2px dashed var(--btn-border);
+      background: #fffef7;
+      padding: 0.85rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 0.6rem;
+      cursor: pointer;
+    }
+
+    /* Scheduled list */
+    .schedule-list {
+      background: #fdfaf4;
+      border-radius: 18px;
+      border: 2px dashed var(--card-border);
+      padding: 1rem 1.2rem;
+      margin-top: 1.4rem;
+    }
+
+    .schedule-item {
+      padding: 0.4rem 0;
+      font-size: 1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- TOP BAR -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo-box">
+          <img src="/components/monkeyteacher.png" class="brand-logo-img" alt="Mentee Logo">
+        </div>
+        <span>Mentee</span>
+      </div>
+
+      <button class="btn-secondary" onclick="window.location.href='filter.html'">
+        ← Back to sessions
+      </button>
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+      <div class="layout">
+
+        <!-- LEFT: SELECTED SESSION -->
+        <section class="card">
+          <h2>Selected session</h2>
+
+          <p id="noSessionMsg">Loading your selected session...</p>
+
+          <div id="sessionDetails" class="hidden">
+            <h2 id="sessionTitle"></h2>
+            <p id="sessionDesc"></p>
+
+            <div class="tags">
+              <span class="tag" id="sessionModeTag"></span>
+              <span class="tag" id="sessionCategoryTag"></span>
+            </div>
+
+            <p class="rating" id="sessionRating"></p>
+
+            <!-- BULLETS -->
+            <ul id="sessionExtraList" class="extra-list"></ul>
+
+            <!-- LONG PARAGRAPH -->
+            <p id="sessionLongDesc" class="long-description hidden"></p>
+          </div>
+        </section>
+
+
+        <!-- RIGHT: SCHEDULING FORM -->
+        <section class="card">
+          <h2>Schedule your lesson</h2>
+
+          <form id="scheduleForm">
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="date" class="input" required>
+            </div>
+
+            <div class="form-group">
+              <label>Time</label>
+              <input type="time" id="time" class="input" required>
+            </div>
+
+            <div class="form-group">
+              <label>Duration (minutes)</label>
+              <input type="number" id="duration" class="input" min="15" step="15" value="30">
+            </div>
+
+            <div class="form-group">
+              <label>Notes (optional)</label>
+              <textarea id="notes" class="textarea"></textarea>
+            </div>
+
+            <button class="btn-primary" type="submit">Confirm lesson</button>
+            <button class="btn-email" type="button" id="emailButton">✉️ Send email confirmation</button>
+          </form>
+        </section>
+      </div>
+
+
+      <!-- SCHEDULED LIST -->
+      <section class="schedule-list">
+        <h3>Your scheduled lessons</h3>
+        <div id="scheduledList"></div>
+      </section>
+    </main>
+  </div>
+
+
+  <script>
+    let currentSession = null;
+
+    /* Load selected session from localStorage */
+    const raw = localStorage.getItem("menteeSelectedSession");
+    if (raw) {
+      currentSession = JSON.parse(raw);
+
+      document.getElementById("noSessionMsg").classList.add("hidden");
+      document.getElementById("sessionDetails").classList.remove("hidden");
+
+      document.getElementById("sessionTitle").textContent = currentSession.title;
+      document.getElementById("sessionDesc").textContent = currentSession.description;
+      document.getElementById("sessionModeTag").textContent =
+        currentSession.mode === "online" ? "Online" : "In-person";
+      document.getElementById("sessionCategoryTag").textContent = currentSession.category;
+      document.getElementById("sessionRating").textContent = currentSession.rating;
+
+      const extra = document.getElementById("sessionExtraList");
+      extra.innerHTML = "";
+
+      /* BULLET LIST FOR MANDARIN */
+      if (currentSession.title.includes("Beginner Mandarin")) {
+        extra.innerHTML = `
+          <li>Ideal for complete beginners with little to no Mandarin background.</li>
+          <li>Focuses on everyday phrases: greetings, introductions, and basic questions.</li>
+          <li>Includes speaking practice, pronunciation tips, and tone drills.</li>
+          <li>By the end of the session, you’ll be able to introduce yourself and hold a short, simple conversation.</li>
+        `;
+      }
+
+      /* LONG PARAGRAPH FOR POSTER DESIGN BASICS */
+      if (currentSession.title.includes("Poster Design Basics")) {
+        document.getElementById("sessionLongDesc").textContent =
+          "Poster Design Basics introduces you to the foundational principles of visual communication. You’ll learn how to balance typography, imagery, and layout to create posters that capture attention and communicate clearly. This session breaks down concepts like hierarchy, contrast, spacing, and colour harmony into beginner-friendly steps. By the end, you’ll design a polished mini-poster and gain essential skills used by graphic designers in real-world creative work.";
+        document.getElementById("sessionLongDesc").classList.remove("hidden");
+      }
+    }
+
+    /* Load scheduled sessions */
+    function loadScheduled() {
+      const raw = localStorage.getItem("menteeScheduledSessions");
+      const box = document.getElementById("scheduledList");
+
+      if (!raw) {
+        box.innerHTML = "<p>No lessons yet.</p>";
+        return;
+      }
+
+      const arr = JSON.parse(raw);
+      if (!arr.length) {
+        box.innerHTML = "<p>No lessons yet.</p>";
+        return;
+      }
+
+      box.innerHTML = arr
+        .map(
+          (s) =>
+            `<div class="schedule-item">${s.title} – ${s.date} at ${s.time} (${s.duration} min, ${s.mode})</div>`
+        )
+        .join("");
+    }
+
+    loadScheduled();
+
+    /* Scheduling handler */
+    document.getElementById("scheduleForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const date = date.value;
+      const time = time.value;
+      const duration = duration.value;
+
+      let arr = JSON.parse(localStorage.getItem("menteeScheduledSessions") || "[]");
+
+      arr.push({
+        title: currentSession.title,
+        date,
+        time,
+        duration,
+        mode: currentSession.mode === "online" ? "Online" : "In-person",
+      });
+
+      localStorage.setItem("menteeScheduledSessions", JSON.stringify(arr));
+      loadScheduled();
+
+      alert("Lesson scheduled!");
+    });
+
+    /* Email confirmation (simulated) */
+    document.getElementById("emailButton").addEventListener("click", () => {
+      alert("A confirmation email would be sent to the mentor & mentee.");
+    });
+  </script>
+
+</body>
+</html>

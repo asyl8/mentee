@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mentee – Creative Sessions & Achievements</title>
+  <style>
+    :root {
+      --mint-bg: #e4f5ee;
+      --peach-card: #f8d5a4;
+      --card-border: #2b241f;
+      --chip-bg: #e6e7ec;
+      --chip-text: #333333;
+      --btn-green: #3bd48c;
+      --btn-border: #2b241f;
+      --text-main: #2b241f;
+      --text-muted: #555555;
+      --white: #ffffff;
+      --badge-earned: #f4de8d;
+      --badge-locked: #e1e1e1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--mint-bg);
+      color: var(--text-main);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1.5rem;
+      background: #fdfdfd;
+      border-bottom: 2px solid #dcdcdc;
+      font-weight: 600;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-logo-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 2px solid var(--card-border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Layout: sidebar + content */
+    .main-area {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 180px;
+      border-right: 2px solid #dcdcdc;
+      background: #f4f7f5;
+      padding: 1rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .side-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .side-link {
+      border-radius: 999px;
+      border: 2px solid var(--card-border);
+      background: #ffffff;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.86rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .side-link span.icon { font-size: 0.9rem; }
+
+    .side-link:hover {
+      background: #f1f1f1;
+      transform: translateY(-1px);
+    }
+
+    .side-link.active {
+      background: #2b241f;
+      color: #ffffff;
+    }
+
+    /* Content wrapper */
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Controls shell (search + filters) */
+    .controls-shell {
+      padding: 1.1rem 1.5rem 0.8rem;
+    }
+
+    .controls-inner {
+      background: #fdfdfb;
+      border-radius: 20px;
+      border: 2px solid var(--card-border);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      align-items: center;
+    }
+
+    /* Search */
+    .search-area {
+      flex: 1.4;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.4rem;
+      border-radius: 999px;
+      border: 2px solid var(--card-border);
+      font-size: 0.95rem;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .search-bar::placeholder {
+      color: #9c9c9c;
+    }
+
+    .search-bar:focus {
+      box-shadow: 0 0 0 2px rgba(43,36,31,0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Filter row */
+    .filters-row {
+      flex: 1;
+      min-width: 220px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.75rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .filter-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .select-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .filter-select {
+      border-radius: 999px;
+      border: 2px solid var(--card-border);
+      background: var(--white);
+      padding: 0.28rem 1.6rem 0.28rem 0.7rem;
+      font-size: 0.8rem;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .select-wrapper::after {
+      content: "▾";
+      position: absolute;
+      right: 0.5rem;
+      pointer-events: none;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .filter-select:focus {
+      box-shadow: 0 0 0 2px rgba(43,36,31,0.15);
+    }
+
+    /* Distance slider */
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-width: 170px;
+    }
+
+    .slider-group input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 110px;
+      height: 6px;
+      border-radius: 999px;
+      background: #d5d6dc;
+      outline: none;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--btn-green);
+      border: 2px solid var(--card-border);
+      cursor: pointer;
+      margin-top: -5px;
+    }
+
+    .slider-group input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--btn-green);
+      border: 2px solid var(--card-border);
+      cursor: pointer;
+    }
+
+    .slider-value {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Sessions grid */
+    .grid {
+      padding: 0.5rem 1.5rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--peach-card);
+      border-radius: 18px;
+      border: 2px solid var(--card-border);
+      padding: 1rem 1rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 190px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.06);
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .chip {
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border-radius: 999px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.78rem;
+    }
+
+    .rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .buttons-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+
+    .btn-like,
+    .btn-join {
+      border-radius: 999px;
+      border: 2px solid var(--btn-border);
+      padding: 0.35rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .btn-like {
+      background: var(--white);
+      color: var(--text-main);
+    }
+
+    .btn-join {
+      background: var(--btn-green);
+      color: var(--white);
+    }
+
+    .btn-like:hover,
+    .btn-join:hover {
+      transform: translateY(-1px);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Achievements */
+    .achievements {
+      padding: 1.2rem 1.5rem 2rem;
+    }
+
+    .achievements h2 {
+      margin: 0 0 0.2rem;
+      font-size: 1.3rem;
+    }
+
+    .achievements p {
+      margin: 0 0 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.9rem;
+    }
+
+    .stat-pill {
+      border-radius: 999px;
+      border: 2px solid var(--card-border);
+      background: var(--white);
+      padding: 0.3rem 0.8rem;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .badge {
+      border-radius: 16px;
+      border: 2px solid var(--card-border);
+      background: var(--badge-locked);
+      padding: 0.7rem 0.9rem;
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      transition: background 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+    }
+
+    .badge-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .badge-content { display: flex; flex-direction: column; gap: 0.1rem; }
+    .badge-title { font-weight: 700; }
+    .badge-desc { font-size: 0.78rem; color: var(--text-muted); }
+
+    .badge-earned {
+      background: var(--badge-earned);
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .badge-earned .badge-icon { background: #fffbe5; }
+
+    @media (max-width: 720px) {
+      .main-area { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid #dcdcdc;
+      }
+      .side-title { display: none; }
+      .sidebar .side-link {
+        flex: 1;
+        justify-content: center;
+      }
+      .controls-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filters-row {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo-box">
+          <img src="/components/monkeyteacher.png" class="brand-logo-img" alt="Mentee Logo">
+        </div>
+        <span>Mentee</span>
+      </div>
+      <span style="font-size: 0.85rem; color: var(--text-muted);">
+        Creative Credits: <span id="creditsCount">0</span> · Streak: 🎨1
+      </span>
+    </header>
+
+    <!-- Sidebar + main content -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="side-title">Menu</div>
+        <button class="side-link active" id="sessionsTab">
+          <span class="icon">🖌️</span> Sessions
+        </button>
+        <button class="side-link" id="achievementsTab">
+          <span class="icon">🏅</span> Achievements
+        </button>
+      </aside>
+
+      <!-- Right side views -->
+      <div class="content-wrapper">
+        <!-- Sessions view -->
+        <section id="sessionsView">
+          <!-- Controls: search + filters -->
+          <section class="controls-shell">
+            <div class="controls-inner">
+              <!-- Search -->
+              <div class="search-area">
+                <span class="search-icon">🔍</span>
+                <input
+                  id="searchInput"
+                  type="text"
+                  class="search-bar"
+                  placeholder="Search creative classes..."
+                />
+              </div>
+
+              <!-- Filters row -->
+              <div class="filters-row">
+                <div class="filter-group">
+                  <span class="filter-label">Mode</span>
+                  <div class="select-wrapper">
+                    <select id="modeFilter" class="filter-select">
+                      <option value="all">All</option>
+                      <option value="online">Online</option>
+                      <option value="in-person">In-person</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <span class="filter-label">Focus</span>
+                  <div class="select-wrapper">
+                    <select id="categoryFilter" class="filter-select">
+                      <option value="all">All</option>
+                      <option value="digital art">Digital art</option>
+                      <option value="design">Design</option>
+                      <option value="writing">Writing</option>
+                      <option value="music">Music</option>
+                      <option value="performing arts">Performing arts</option>
+                      <option value="craft diy">Craft & DIY</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filter-group" id="distanceGroup" style="display:none;">
+                  <span class="filter-label">Distance</span>
+                  <div class="slider-group">
+                    <input
+                      type="range"
+                      id="distanceSlider"
+                      min="1"
+                      max="25"
+                      step="1"
+                      value="10"
+                    />
+                    <span class="slider-value" id="distanceValue">
+                      Within 10 km
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card grid -->
+          <section class="grid" id="sessionGrid">
+            <!-- Card 1 -->
+            <article
+              class="card"
+              data-mode="online"
+              data-category="design"
+            >
+              <div>
+                <div class="card-title">Poster Design Basics</div>
+                <div class="card-sub">
+                  Learn layout, hierarchy, and typography for eye-catching posters.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">Online</span>
+                  <span class="chip">design</span>
+                </div>
+                <div class="rating">⭐ 4.7</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+               <a href="scheduling.html">
+  <button class="btn-join">Join</button>
+</a> 
+              </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article
+              class="card"
+              data-mode="online"
+              data-category="digital art"
+            >
+              <div>
+                <div class="card-title">Digital Illustration for Beginners</div>
+                <div class="card-sub">
+                  Draw your first character using simple shapes and layers.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">Online</span>
+                  <span class="chip">digital art</span>
+                </div>
+                <div class="rating">⭐ 4.9</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+                <button class="btn-join">Join</button>
+              </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article
+              class="card"
+              data-mode="in-person"
+              data-category="performing arts"
+              data-distance="4"
+            >
+              <div>
+                <div class="card-title">Improv for Shy Creators</div>
+                <div class="card-sub">
+                  Low-pressure theatre games to boost confidence and spontaneity.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">In-person · 4 km away</span>
+                  <span class="chip">performing arts</span>
+                </div>
+                <div class="rating">⭐ 4.8</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+                <button class="btn-join">Join</button>
+              </div>
+            </article>
+
+            <!-- Card 4 -->
+            <article
+              class="card"
+              data-mode="online"
+              data-category="writing"
+            >
+              <div>
+                <div class="card-title">Creative Writing Sprint</div>
+                <div class="card-sub">
+                  30-minute guided prompts to build your storytelling muscles.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">Online</span>
+                  <span class="chip">writing</span>
+                </div>
+                <div class="rating">⭐ 4.6</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+                <button class="btn-join">Join</button>
+              </div>
+            </article>
+
+            <!-- Card 5 -->
+            <article
+              class="card"
+              data-mode="in-person"
+              data-category="craft diy"
+              data-distance="9"
+            >
+              <div>
+                <div class="card-title">DIY Zine Making</div>
+                <div class="card-sub">
+                  Cut, collage, and staple your own mini-magazine.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">In-person · 9 km away</span>
+                  <span class="chip">craft & DIY</span>
+                </div>
+                <div class="rating">⭐ 4.9</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+                <button class="btn-join">Join</button>
+              </div>
+            </article>
+
+            <!-- Card 6 -->
+            <article
+              class="card"
+              data-mode="online"
+              data-category="music"
+            >
+              <div>
+                <div class="card-title">Songwriting Lab</div>
+                <div class="card-sub">
+                  Turn a personal story into simple lyrics and a chord progression.
+                </div>
+                <div class="chip-row">
+                  <span class="chip">Online</span>
+                  <span class="chip">music</span>
+                </div>
+                <div class="rating">⭐ 4.5</div>
+              </div>
+              <div class="buttons-row">
+                <button class="btn-like">Like 👍</button>
+                <button class="btn-join">Join</button>
+              </div>
+            </article>
+          </section>
+        </section>
+
+        <!-- Achievements view -->
+        <section id="achievementsView" class="hidden">
+          <div class="achievements">
+            <h2>Your creative achievements</h2>
+            <p>Join more classes to unlock badges and track your creative streak.</p>
+
+            <div class="stat-row">
+              <div class="stat-pill">
+                Sessions joined: <strong id="sessionsJoinedCount">0</strong>
+              </div>
+              <div class="stat-pill">
+                Badges earned: <strong id="badgesEarnedCount">0</strong> / 5
+              </div>
+            </div>
+
+            <div class="badge-grid">
+              <div class="badge" data-threshold="1">
+                <div class="badge-icon">🎨</div>
+                <div class="badge-content">
+                  <div class="badge-title">Getting Started</div>
+                  <div class="badge-desc">Join your first creative session.</div>
+                </div>
+              </div>
+
+              <div class="badge" data-threshold="3">
+                <div class="badge-icon">🖌️</div>
+                <div class="badge-content">
+                  <div class="badge-title">Creative Explorer</div>
+                  <div class="badge-desc">Join 3 different creative classes.</div>
+                </div>
+              </div>
+
+              <div class="badge" data-threshold="5">
+                <div class="badge-icon">📚</div>
+                <div class="badge-content">
+                  <div class="badge-title">Multi-Muse</div>
+                  <div class="badge-desc">Try 5 sessions across different focuses.</div>
+                </div>
+              </div>
+
+              <div class="badge" data-threshold="7">
+                <div class="badge-icon">🌙</div>
+                <div class="badge-content">
+                  <div class="badge-title">Late-Night Maker</div>
+                  <div class="badge-desc">Schedule 7 sessions in total.</div>
+                </div>
+              </div>
+
+              <div class="badge" data-threshold="10">
+                <div class="badge-icon">⭐</div>
+                <div class="badge-content">
+                  <div class="badge-title">Super Creator</div>
+                  <div class="badge-desc">Hit 10 creative sessions – you’re on fire!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === Filter + search logic ===
+    const modeFilter = document.getElementById("modeFilter");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const distanceGroup = document.getElementById("distanceGroup");
+    const distanceSlider = document.getElementById("distanceSlider");
+    const distanceValue = document.getElementById("distanceValue");
+    const cards = document.querySelectorAll(".card");
+    const searchInput = document.getElementById("searchInput");
+
+    function updateDistanceLabel() {
+      const val = distanceSlider.value;
+      distanceValue.textContent = `Within ${val} km`;
+    }
+
+    function applyFilters() {
+      const modeValue = modeFilter.value;
+      const categoryValue = categoryFilter.value;
+      const searchValue = searchInput.value.toLowerCase().trim();
+
+      // show/hide distance slider for in-person mode
+      if (modeValue === "in-person") {
+        distanceGroup.style.display = "flex";
+      } else {
+        distanceGroup.style.display = "none";
+      }
+
+      cards.forEach((card) => {
+        const cardMode = card.getAttribute("data-mode");
+        const cardCategory = card.getAttribute("data-category");
+        const cardDistanceAttr = card.getAttribute("data-distance");
+
+        const title = card.querySelector(".card-title").textContent.toLowerCase();
+        const desc = card.querySelector(".card-sub").textContent.toLowerCase();
+        const categoryText = cardCategory.toLowerCase();
+
+        const searchMatch =
+          searchValue === "" ||
+          title.includes(searchValue) ||
+          desc.includes(searchValue) ||
+          categoryText.includes(searchValue);
+
+        const matchesMode = modeValue === "all" || cardMode === modeValue;
+        const matchesCategory =
+          categoryValue === "all" || cardCategory === categoryValue;
+
+        let matchesDistance = true;
+        if (modeValue === "in-person") {
+          const maxDistance = parseInt(distanceSlider.value, 10);
+          const cardDistance = cardDistanceAttr
+            ? parseInt(cardDistanceAttr, 10)
+            : Infinity;
+          matchesDistance = cardDistance <= maxDistance;
+        }
+
+        if (matchesMode && matchesCategory && searchMatch && matchesDistance) {
+          card.classList.remove("hidden");
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+    }
+
+    modeFilter.addEventListener("change", applyFilters);
+    categoryFilter.addEventListener("change", applyFilters);
+    distanceSlider.addEventListener("input", () => {
+      updateDistanceLabel();
+      applyFilters();
+    });
+    searchInput.addEventListener("input", applyFilters);
+
+    updateDistanceLabel();
+    applyFilters();
+
+    // === Achievements + Join → Schedule ===
+    const creditsCountEl = document.getElementById("creditsCount");
+    const sessionsJoinedCountEl = document.getElementById("sessionsJoinedCount");
+    const badgesEarnedCountEl = document.getElementById("badgesEarnedCount");
+    const badges = document.querySelectorAll(".badge");
+
+    localStorage.removeItem("menteeSessionsJoined");
+    
+    let sessionsJoined = 0;
+
+    function syncCounters() {
+      creditsCountEl.textContent = sessionsJoined.toString();
+      sessionsJoinedCountEl.textContent = sessionsJoined.toString();
+    }
+
+    function updateBadges() {
+      let earned = 0;
+      badges.forEach((badge) => {
+        const threshold = parseInt(badge.getAttribute("data-threshold"), 10);
+        if (sessionsJoined >= threshold) {
+          badge.classList.add("badge-earned");
+          earned++;
+        } else {
+          badge.classList.remove("badge-earned");
+        }
+      });
+      badgesEarnedCountEl.textContent = earned.toString();
+    }
+
+    syncCounters();
+    updateBadges();
+
+    function handleJoinClick(card) {
+      sessionsJoined++;
+      localStorage.setItem("menteeSessionsJoined", sessionsJoined.toString());
+      syncCounters();
+      updateBadges();
+
+      const title = card.querySelector(".card-title").textContent.trim();
+      const description = card.querySelector(".card-sub").textContent.trim();
+      const mode = card.getAttribute("data-mode");
+      const category = card.getAttribute("data-category");
+      const rating = card.querySelector(".rating").textContent.trim();
+
+      const selectedSession = { title, description, mode, category, rating };
+
+      localStorage.setItem(
+        "menteeSelectedSession",
+        JSON.stringify(selectedSession)
+      );
+
+      window.location.href = "schedule.html";
+    }
+
+    document.querySelectorAll(".btn-join").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".card");
+        handleJoinClick(card);
+      });
+    });
+
+    // === Sidebar tab switching ===
+    const sessionsTab = document.getElementById("sessionsTab");
+    const achievementsTab = document.getElementById("achievementsTab");
+    const sessionsView = document.getElementById("sessionsView");
+    const achievementsView = document.getElementById("achievementsView");
+
+    sessionsTab.addEventListener("click", () => {
+      sessionsTab.classList.add("active");
+      achievementsTab.classList.remove("active");
+      sessionsView.classList.remove("hidden");
+      achievementsView.classList.add("hidden");
+    });
+
+    achievementsTab.addEventListener("click", () => {
+      achievementsTab.classList.add("active");
+      sessionsTab.classList.remove("active");
+      achievementsView.classList.remove("hidden");
+      sessionsView.classList.add("hidden");
+    });
+  </script>
+</body>
+</html>

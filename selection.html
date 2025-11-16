@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mentee – Choose Your Learning Style</title>
+  <style>
+    :root {
+      --blue: #cae0f4;
+      --yellow: #f4de8d;
+      --cream: #f4eee3;
+      --orange: #f25635;
+      --red: #7d2d17;
+       --turquoise: #ebf6ee;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--turquoise);
+      color: var(--red);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar with logo + brand */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      padding: 0.9rem 2rem;
+      background: #ffffff;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: 0.03em;
+      color: var(--red);
+    }
+
+    /* Main content */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 650px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      padding: 2rem 2rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      opacity: 0.4;
+      background: radial-gradient(circle at top left, var(--blue), transparent 60%);
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+      color: var(--red);
+    }
+
+    .card-subtitle {
+      font-size: 0.95rem;
+      color: #7a5a4b;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #9a7560;
+      margin-bottom: 0.4rem;
+    }
+
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .option-btn {
+      border-radius: 999px;
+      padding: 0.55rem 1rem;
+      border: 1.5px solid rgba(125, 45, 23, 0.25);
+      background: #ffffff;
+      font-size: 0.9rem;
+      color: var(--red);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease, transform 0.1s ease,
+        box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .option-btn span.dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(125, 45, 23, 0.16);
+    }
+
+    .option-btn:hover {
+      background: var(--blue);
+      border-color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .option-btn.selected {
+      background: var(--orange);
+      color: #ffffff;
+      border-color: var(--orange);
+      box-shadow: 0 8px 18px rgba(242, 86, 53, 0.35);
+    }
+
+    .option-btn.selected span.dot {
+      background: #ffffff;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #9a7560;
+      margin-bottom: 1.6rem;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    .summary {
+      font-size: 0.8rem;
+      color: #795447;
+    }
+
+    .primary-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.7rem 1.5rem;
+      background: var(--orange);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(242, 86, 53, 0.3);
+      transition: background 0.15s ease, transform 0.1s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .primary-btn:hover {
+      background: var(--red);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(125, 45, 23, 0.35);
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 1.6rem 1.4rem 1.6rem;
+        border-radius: 20px;
+      }
+
+      .card-title {
+        font-size: 1.4rem;
+      }
+
+      .footer-row {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
+
+      .primary-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="brand">
+        <img src="/components/monkeyteacher.png" alt="Mentee Logo" class="brand-logo" />
+        <span class="brand-name">Mentee</span>
+      </div>
+    </header>
+
+    <!-- Main selection card -->
+    <main class="content">
+      <section class="card">
+        <div class="card-inner">
+          <h1 class="card-title">Tell us how you want to learn.</h1>
+          <p class="card-subtitle">
+            Choose your preferred style and the kinds of skills you’re excited
+            about. We’ll use this to match you with the best sessions.
+          </p>
+
+          <!-- Mode selection -->
+          <div>
+            <div class="section-label">1 · Session mode</div>
+            <div class="options-row" id="mode-options">
+              <button class="option-btn" data-mode="Online">
+                <span class="dot"></span>
+                Online
+              </button>
+              <button class="option-btn" data-mode="In-Person">
+                <span class="dot"></span>
+                In-person
+              </button>
+              <button class="option-btn" data-mode="Either">
+                <span class="dot"></span>
+                Either is okay
+              </button>
+            </div>
+          </div>
+
+          <!-- Category selection -->
+          <div>
+            <div class="section-label">2 · Skill categories</div>
+            <div class="options-row" id="category-options">
+              <button class="option-btn" data-category="Tech">
+                <span class="dot"></span>
+                Tech
+              </button>
+              <button class="option-btn" data-category="Creative">
+                <span class="dot"></span>
+                Creative
+              </button>
+              <button class="option-btn" data-category="Academics">
+                <span class="dot"></span>
+                Academics
+              </button>
+              <button class="option-btn" data-category="Finance">
+                <span class="dot"></span>
+                Finance
+              </button>
+              <button class="option-btn" data-category="Health & Fitness">
+                <span class="dot"></span>
+                Health &amp; Fitness
+              </button>
+              <button class="option-btn" data-category="Community & Hobbies">
+                <span class="dot"></span>
+                Community &amp; Hobbies
+              </button>
+            </div>
+          </div>
+
+          <p class="hint">
+            You can change these later — this just helps us get you started.
+          </p>
+
+          <!-- Summary + Continue -->
+          <div class="footer-row">
+            <div class="summary" id="selection-summary">
+              Mode: <strong>not selected</strong> · Categories: <strong>none</strong>
+            </div>
+            <button class="primary-btn">
+              Continue
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // MODE SELECTION (single choice)
+    const modeContainer = document.getElementById("mode-options");
+    const categoryContainer = document.getElementById("category-options");
+    const summaryEl = document.getElementById("selection-summary");
+
+    let selectedMode = null;
+    const selectedCategories = new Set();
+
+    if (modeContainer) {
+      modeContainer.addEventListener("click", (e) => {
+        const btn = e.target.closest(".option-btn");
+        if (!btn) return;
+
+        // clear previous selection
+        [...modeContainer.querySelectorAll(".option-btn")].forEach((b) =>
+          b.classList.remove("selected")
+        );
+
+        btn.classList.add("selected");
+        selectedMode = btn.getAttribute("data-mode");
+        updateSummary();
+      });
+    }
+
+    // CATEGORY SELECTION (multi-choice)
+    if (categoryContainer) {
+      categoryContainer.addEventListener("click", (e) => {
+        const btn = e.target.closest(".option-btn");
+        if (!btn) return;
+
+        const value = btn.getAttribute("data-category");
+        if (!value) return;
+
+        if (btn.classList.contains("selected")) {
+          btn.classList.remove("selected");
+          selectedCategories.delete(value);
+        } else {
+          btn.classList.add("selected");
+          selectedCategories.add(value);
+        }
+        updateSummary();
+      });
+    }
+
+    function updateSummary() {
+      const modeText = selectedMode || "not selected";
+      const categoriesText =
+        selectedCategories.size > 0
+          ? Array.from(selectedCategories).join(", ")
+          : "none";
+
+      summaryEl.innerHTML =
+        'Mode: <strong>' +
+        modeText +
+        "</strong> · Categories: <strong>" +
+        categoriesText +
+        "</strong>";
+    }
+  </script>
+</body>
+</html>
